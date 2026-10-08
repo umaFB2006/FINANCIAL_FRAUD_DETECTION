@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Analysis {{ txn.transaction_id }}{% endblock %}
+{% block heading %}Transaction analysis{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h4>TRANSACTION ANALYSIS</h4>
+    <div class="row g-3 mt-2">
+      <div class="col-md-4"><strong>Transaction ID</strong><div>{{ txn.transaction_id }}</div></div>
+      <div class="col-md-4"><strong>Amount</strong><div>₹{{ '{:,.2f}'.format(txn.amount) }}</div></div>
+      <div class="col-md-4"><strong>Type</strong><div>{{ txn.transaction_type }}</div></div>
+      <div class="col-md-4"><strong>Prediction</strong><div>{{ txn.prediction }}</div></div>
+      <div class="col-md-4"><strong>ML Score</strong><div>{{ txn.ml_score }}</div></div>
+      <div class="col-md-4"><strong>Rule Score</strong><div>{{ txn.rule_score }}</div></div>
+      <div class="col-md-4"><strong>Behavior Score</strong><div>{{ txn.behavior_score }}</div></div>
+      <div class="col-md-4"><strong>Final Risk Score</strong><div>{{ txn.risk_score }}</div></div>
+      <div class="col-md-4"><strong>Risk Level</strong><div><span class="badge risk-{{ txn.risk_level }}">{{ txn.risk_level }}</span></div></div>
+      <div class="col-md-12"><strong>Action</strong><div>{{ txn.recommended_action }} · {{ txn.status }}</div></div>
+    </div>
+    <h5 class="mt-4">Reasons</h5>
+    <ul>
+      {% for reason in reasons %}
+        <li>✓ {{ reason }}</li>
+      {% endfor %}
+    </ul>
+    <div class="d-flex flex-wrap gap-2 mt-3">
+      {% if investigation %}
+      {% if current_user.role in ['INVESTIGATOR','ADMIN'] %}
+      <a class="btn btn-danger" href="{{ url_for('investigation_detail', investigation_id=investigation.id) }}">View Investigation</a>
+      {% endif %}
+      {% endif %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('history') }}">View History</a>
+      <a class="btn btn-outline-primary" href="{{ url_for('new_transaction') }}">New Transaction</a>
+      <a class="btn btn-outline-dark" href="{{ url_for('dashboard') }}">Dashboard</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block heading %}Transaction history{% endblock %}
+{% block content %}
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-2">
+    <select name="risk_level" class="form-select">
+      <option value="">All risk</option>
+      {% for v in ['LOW','MEDIUM','HIGH'] %}<option value="{{ v }}" {% if risk==v %}selected{% endif %}>{{ v }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><input class="form-control" name="status" placeholder="Status" value="{{ status }}"></div>
+  <div class="col-md-2"><input class="form-control" name="transaction_type" placeholder="Type" value="{{ txn_type }}"></div>
+  <div class="col-md-4"><input class="form-control" name="q" placeholder="Search ID / beneficiary / location" value="{{ search }}"></div>
+  <div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div>
+</form>
+<div class="table-responsive card">
+  <table class="table table-hover mb-0">
+    <thead><tr><th>ID</th><th>Date</th><th>Amount</th><th>Type</th><th>Score</th><th>Risk</th><th>Prediction</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td>{{ row.transaction_id }}</td>
+        <td>{{ row.created_at }}</td>
+        <td>₹{{ '{:,.2f}'.format(row.amount) }}</td>
+        <td>{{ row.transaction_type }}</td>
+        <td>{{ row.risk_score }}</td>
+        <td><span class="badge risk-{{ row.risk_level }}">{{ row.risk_level }}</span></td>
+        <td>{{ row.prediction }}</td>
+        <td>{{ row.status }}</td>
+        <td><a href="{{ url_for('transaction_detail', transaction_id=row.transaction_id) }}">View</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="9">No matching transactions.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

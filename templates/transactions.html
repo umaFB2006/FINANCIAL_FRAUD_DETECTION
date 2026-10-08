@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Transactions{% endblock %}
+{% block heading %}Transactions{% endblock %}
+{% block content %}
+<div class="panel">
+  <div class="toolbar">
+    <input id="searchBox" class="form-control" placeholder="Search ID, customer, location">
+    <select id="predFilter" class="form-select">
+      <option value="">All predictions</option>
+      <option>NORMAL</option>
+      <option>SUSPICIOUS</option>
+      <option>FRAUD</option>
+    </select>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-dark table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Transaction ID</th><th>Customer</th><th>Amount</th><th>Type</th>
+          <th>Location</th><th>Payment</th><th>Risk</th><th>Prediction</th>
+          <th>Severity</th><th>Time</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="txnBody"></tbody>
+    </table>
+  </div>
+  <div class="d-flex justify-content-between">
+    <button class="btn btn-outline-light btn-sm" id="prevPage">Previous</button>
+    <span id="pageInfo"></span>
+    <button class="btn btn-outline-light btn-sm" id="nextPage">Next</button>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/transactions.js') }}"></script>
+{% endblock %}

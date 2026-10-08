@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}New Transaction{% endblock %}
+{% block heading %}Analyze a new transaction{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-body p-4">
+    <p class="text-muted">Every submission is stored in SQLite and scored by ML, rules, and behavior profiling. Previous transactions are never overwritten.</p>
+    <form method="post" id="txn-form">
+      {{ form.hidden_tag() }}
+      <div class="row g-3">
+        <div class="col-md-6">{{ form.transaction_id.label }}{{ form.transaction_id(class="form-control", placeholder="TXN1001 (optional unique ID)") }}</div>
+        <div class="col-md-6">{{ form.amount.label }}{{ form.amount(class="form-control", placeholder="150000") }}</div>
+        <div class="col-md-6">{{ form.transaction_type.label }}{{ form.transaction_type(class="form-select") }}</div>
+        <div class="col-md-6">{{ form.beneficiary.label }}{{ form.beneficiary(class="form-control", placeholder="Rahul") }}</div>
+        <div class="col-md-6">{{ form.location.label }}{{ form.location(class="form-control", placeholder="Hyderabad") }}</div>
+        <div class="col-md-6">{{ form.device_id.label }}{{ form.device_id(class="form-control", placeholder="DEVICE_NEW_99") }}</div>
+        <div class="col-md-6">{{ form.ip_address.label }}{{ form.ip_address(class="form-control", placeholder="192.168.1.50") }}</div>
+        <div class="col-md-6">{{ form.transaction_time.label }}{{ form.transaction_time(class="form-control", placeholder="02:30 AM") }}</div>
+        <div class="col-md-4 form-check mt-4">{{ form.is_international(class="form-check-input") }} {{ form.is_international.label(class="form-check-label") }}</div>
+        <div class="col-md-4 form-check mt-4">{{ form.is_new_device(class="form-check-input") }} {{ form.is_new_device.label(class="form-check-label") }}</div>
+        <div class="col-md-4 form-check mt-4">{{ form.is_new_beneficiary(class="form-check-input") }} {{ form.is_new_beneficiary.label(class="form-check-label") }}</div>
+      </div>
+      <button class="btn btn-danger btn-lg mt-4" type="submit"><i class="bi bi-shield-exclamation"></i> Analyze Transaction</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

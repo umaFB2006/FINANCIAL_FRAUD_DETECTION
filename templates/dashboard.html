@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Operations dashboard{% endblock %}
+{% block content %}
+<div class="row g-3" id="dashboard-stats" data-stats='{{ stats|tojson }}'>
+  {% for key, label in [
+    ('total','Total Transactions'),('legitimate','Legitimate'),('suspicious','Suspicious'),
+    ('fraud','Fraud'),('low','LOW Risk'),('medium','MEDIUM Risk'),('high','HIGH Risk'),
+    ('active_investigations','Active Investigations'),('resolved_investigations','Resolved Investigations'),
+    ('average_risk','Average Risk Score')
+  ] %}
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="stat-label">{{ label }}</div>
+      <div class="stat-value">{{ stats[key] }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<div class="row g-3 mt-1">
+  <div class="col-md-6"><div class="card"><div class="card-body"><h5>Risk distribution</h5><canvas id="riskChart"></canvas></div></div></div>
+  <div class="col-md-6"><div class="card"><div class="card-body"><h5>Prediction mix</h5><canvas id="predChart"></canvas></div></div></div>
+</div>
+<div class="card mt-3">
+  <div class="card-body">
+    <h5>Recent transactions</h5>
+    <div class="table-responsive">
+      <table class="table table-sm">
+        <thead><tr><th>ID</th><th>Amount</th><th>Risk</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        {% for row in recent %}
+          <tr>
+            <td>{{ row.transaction_id }}</td>
+            <td>₹{{ '%.2f'|format(row.amount) }}</td>
+            <td><span class="badge risk-{{ row.risk_level }}">{{ row.risk_level }}</span></td>
+            <td>{{ row.status }}</td>
+            <td><a href="{{ url_for('transaction_detail', transaction_id=row.transaction_id) }}">View</a></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">No transactions yet. <a href="{{ url_for('new_transaction') }}">Create one</a>.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

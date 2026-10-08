@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Case {{ investigation_id }}{% endblock %}
+{% block heading %}Investigation details{% endblock %}
+{% block content %}
+<div id="caseRoot" data-id="{{ investigation_id }}">Loading…</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadCase() {
+  const id = document.getElementById("caseRoot").dataset.id;
+  const res = await fetch(`/api/investigations/${id}`);
+  const json = await res.json();
+  if (!json.success) {
+    document.getElementById("caseRoot").innerHTML = `<div class="alert alert-danger">${json.error}</div>`;
+    return;
+  }
+  const c = json.data;
+  const t = c.transaction || {};
+  const p = c.prediction || {};
+  const cust = c.customer || {};
+  const evidence = (c.evidence || []).map(e => `<li>${e}</li>`).join("");
+  const events = (c.events || []).map(e => `<li><strong>${e.event_type}</strong> — ${e.description} <span class="muted">${e.timestamp}</span></li>`).join("");
+  const related = (c.related_transactions || []).map(r => `<tr><td>${r.transaction_id}</td><td>${r.transaction_amount}</td><td>${r.prediction || ""}</td></tr>`).join("");
+  document.getElementById("caseRoot").innerHTML = `
+    <div class="row g-3">
+      <div class="col-lg-6"><div class="panel">
+        <h3>Case overview</h3>
+        <p>${c.investigation_id} · <span class="badge-risk">${c.case_status}</span></p>
+        <pre class="summary">${c.investigation_summary || ""}</pre>
+      </div></div>
+      <div class="col-lg-6"><div class="panel">
+        <h3>Customer profile</h3>
+        <p>${cust.customer_id} — ${cust.name || ""}</p>
+        <p>Account ${cust.account_number || ""} · age ${cust.account_age || 0} days</p>
+        <h3 class="mt-3">Risk assessment</h3>
+        <p>Score ${p.risk_score ?? "-"} · ${p.prediction || "-"} · probability ${p.fraud_probability ?? "-"}</p>
+        <p>AI recommendation: <strong>${c.recommendation}</strong></p>
+      </div></div>
+      <div class="col-lg-6"><div class="panel">
+        <h3>Transaction</h3>
+        <p><a href="/transactions/${t.transaction_id}">${t.transaction_id}</a> ₹${t.transaction_amount} ${t.location} ${t.device_id}</p>
+      </div></div>
+      <div class="col-lg-6"><div class="panel">
+        <h3>Evidence</h3>
+        <ul>${evidence || "<li>None stored</li>"}</ul>
+      </div></div>
+      <div class="col-lg-6"><div class="panel">
+        <h3>Related transactions</h3>
+        <table class="table table-dark table-sm"><tbody>${related || "<tr><td>None</td></tr>"}</tbody></table>
+      </div></div>
+      <div class="col-lg-6"><div class="panel">
+        <h3>Timeline</h3>
+        <ul class="timeline">${events}</ul>
+      </div></div>
+      <div class="col-12"><div class="panel">
+        <h3>Investigator update</h3>
+        <form id="upd">
+          <div class="row g-2">
+            <div class="col-md-3">
+              <select name="case_status" class="form-select">
+                <option>OPEN</option><option>UNDER_REVIEW</option><option>ESCALATED</option>
+                <option>RESOLVED</option><option>FALSE_POSITIVE</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select name="final_decision" class="form-select">
+                <option value="">Decision…</option>
+                <option>FRAUD_CONFIRMED</option>
+                <option>FALSE_POSITIVE</option>
+                <option>NEEDS_MORE_REVIEW</option>
+              </select>
+            </div>
+            <div class="col-md-4"><input name="notes" class="form-control" placeholder="Notes"></div>
+            <div class="col-md-2"><button class="btn btn-primary w-100">Save</button></div>
+          </div>
+        </form>
+      </div></div>
+    </div>`;
+  document.getElementById("upd").onsubmit = async (ev) => {
+    ev.preventDefault();
+    const fd = new FormData(ev.target);
+    const body = Object.fromEntries(fd.entries());
+    const r = await fetch(`/api/investigations/${id}/update`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body)
+    });
+    const j = await r.json();
+    if (!j.success) { alert(j.error); return; }
+    loadCase();
+  };
+}
+loadCase();
+</script>
+{% endblock %}

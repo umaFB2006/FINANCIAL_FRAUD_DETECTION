@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Investigation {{ inv.id }}{% endblock %}
+{% block heading %}Investigation {{ inv.id }}{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card mb-3"><div class="card-body">
+      <h5>Case</h5>
+      <p>Transaction <strong>{{ inv.transaction_id }}</strong> · Status <strong>{{ inv.status }}</strong></p>
+      {% if txn %}
+      <p>Amount ₹{{ '{:,.2f}'.format(txn.amount) }} · Risk {{ txn.risk_score }} ({{ txn.risk_level }})</p>
+      <pre class="small">{{ txn.explanation }}</pre>
+      {% endif %}
+      <p>{{ inv.summary }}</p>
+      <p><strong>Recommendation:</strong> {{ inv.recommendation }}</p>
+    </div></div>
+    <div class="card mb-3"><div class="card-body">
+      <h5>Evidence</h5>
+      <ul>
+        {% for item in evidence %}
+        <li><strong>{{ item.evidence_type }}</strong> ({{ item.severity }} / {{ item.source }}) — {{ item.description }}</li>
+        {% else %}<li>No evidence.</li>{% endfor %}
+      </ul>
+    </div></div>
+    <div class="card mb-3"><div class="card-body">
+      <h5>Timeline</h5>
+      <ol>
+        {% for event in timeline %}
+        <li>{{ event.created_at }} — <strong>{{ event.event_type }}</strong>: {{ event.description }}</li>
+        {% endfor %}
+      </ol>
+    </div></div>
+  </div>
+  <div class="col-lg-4">
+    <div class="card mb-3"><div class="card-body">
+      <h5>Manage</h5>
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-2">{{ form.status.label }}{{ form.status(class="form-select") }}</div>
+        <div class="form-check mb-3">{{ form.assign_to_self(class="form-check-input") }} {{ form.assign_to_self.label(class="form-check-label") }}</div>
+        <button class="btn btn-primary w-100">Update</button>
+      </form>
+      <a class="btn btn-outline-danger w-100 mt-2" href="{{ url_for('download_report', investigation_id=inv.id) }}">Download PDF Report</a>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h5>Feedback</h5>
+      {% for item in comments %}<p class="small mb-2">{{ item.email }}: {{ item.comment }}</p>{% endfor %}
+      <form method="post" action="{{ url_for('investigation_feedback', investigation_id=inv.id) }}">
+        {{ feedback_form.hidden_tag() }}
+        {{ feedback_form.comment(class="form-control mb-2", rows="3") }}
+        <button class="btn btn-secondary w-100">Submit feedback</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block heading %}Investigation reports{% endblock %}
+{% block content %}
+<div class="table-responsive card">
+  <table class="table mb-0">
+    <thead><tr><th>Investigation</th><th>Transaction</th><th>Status</th><th>Risk</th><th>PDF</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td><a href="{{ url_for('investigation_detail', investigation_id=row.id) }}">{{ row.id }}</a></td>
+        <td>{{ row.transaction_id }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.risk_level }} ({{ row.risk_score }})</td>
+        <td><a href="{{ url_for('download_report', investigation_id=row.id) }}">Download PDF Report</a></td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No reports yet.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

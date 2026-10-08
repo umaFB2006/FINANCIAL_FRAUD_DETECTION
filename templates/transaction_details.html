@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Transaction {{ transaction_id }}{% endblock %}
+{% block heading %}Transaction details{% endblock %}
+{% block content %}
+<div id="detailRoot" data-id="{{ transaction_id }}">Loading…</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function load() {
+  const id = document.getElementById("detailRoot").dataset.id;
+  const res = await fetch(`/api/transactions/${id}`);
+  const json = await res.json();
+  if (!json.success) {
+    document.getElementById("detailRoot").innerHTML = `<div class="alert alert-danger">${json.error}</div>`;
+    return;
+  }
+  const d = json.data;
+  const t = d.transaction || {};
+  const p = d.prediction || {};
+  const a = d.alert || {};
+  const inv = d.investigation || {};
+  const related = (d.related_transactions || []).map(r =>
+    `<tr><td>${r.transaction_id}</td><td>${r.transaction_amount}</td><td>${r.location || ""}</td><td>${r.prediction || "-"}</td><td>${r.transaction_time}</td></tr>`
+  ).join("");
+  document.getElementById("detailRoot").innerHTML = `
+    <div class="row g-3">
+      <div class="col-lg-6"><div class="panel">
+        <h3>Transaction information</h3>
+        <dl class="kv">
+          <dt>ID</dt><dd>${t.transaction_id}</dd>
+          <dt>Customer</dt><dd>${t.customer_id}</dd>
+          <dt>Amount</dt><dd>₹ ${t.transaction_amount}</dd>
+          <dt>Type</dt><dd>${t.transaction_type}</dd>
+          <dt>Merchant</dt><dd>${t.merchant}</dd>
+          <dt>Location</dt><dd>${t.location}</dd>
+          <dt>Device</dt><dd>${t.device_id}</dd>
+          <dt>IP</dt><dd>${t.ip_address}</dd>
+          <dt>Payment</dt><dd>${t.payment_method}</dd>
+          <dt>Balance</dt><dd>${t.account_balance}</dd>
+          <dt>International</dt><dd>${t.is_international ? "Yes" : "No"}</dd>
+          <dt>Time</dt><dd>${t.transaction_time}</dd>
+        </dl>
+      </div></div>
+      <div class="col-lg-6"><div class="panel">
+        <h3>AI prediction</h3>
+        <p class="disclaimer">AI-based risk prediction, not a confirmed fraud decision.</p>
+        <p>Probability: <strong>${p.fraud_probability ?? "-"}</strong></p>
+        <p>Risk score: <strong>${p.risk_score ?? "-"}</strong></p>
+        <p>Classification: <span class="badge-risk ${p.prediction}">${p.prediction || "-"}</span></p>
+        <h3 class="mt-3">Investigation</h3>
+        ${inv.investigation_id ? `<p>Case <a href="/investigations/${inv.investigation_id}">${inv.investigation_id}</a> · ${inv.case_status}<br>Recommendation: ${inv.recommendation || "-"}</p>` : "<p>No case opened.</p>"}
+        ${a.alert_id ? `<p>Alert ${a.alert_id} (${a.severity})</p>` : ""}
+      </div></div>
+      <div class="col-12"><div class="panel">
+        <h3>Related customer transactions</h3>
+        <table class="table table-dark table-sm"><thead><tr><th>ID</th><th>Amount</th><th>Location</th><th>Prediction</th><th>Time</th></tr></thead><tbody>${related || "<tr><td colspan=5>None</td></tr>"}</tbody></table>
+      </div></div>
+    </div>`;
+}
+load();
+</script>
+{% endblock %}

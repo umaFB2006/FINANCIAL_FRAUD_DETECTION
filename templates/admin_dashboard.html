@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block heading %}Admin dashboard{% endblock %}
+{% block content %}
+<div class="row g-3" id="dashboard-stats" data-stats='{{ stats|tojson }}'>
+  {% for key, label in [
+    ('total_users','Total Users'),('total','Total Transactions'),('fraud','Total Fraud'),
+    ('high','HIGH Risk'),('medium','MEDIUM Risk'),('low','LOW Risk'),
+    ('active_investigations','Active Investigations'),('confirmed_fraud','Confirmed Fraud'),
+    ('false_positives','False Positives')
+  ] %}
+  <div class="col-md-3"><div class="stat-card"><div class="stat-label">{{ label }}</div><div class="stat-value">{{ stats[key] }}</div></div></div>
+  {% endfor %}
+</div>
+<div class="row g-3 mt-1">
+  <div class="col-md-6"><div class="card"><div class="card-body"><h5>Risk distribution</h5><canvas id="riskChart"></canvas></div></div></div>
+  <div class="col-md-6"><div class="card"><div class="card-body"><h5>Fraud trend</h5><canvas id="trendChart" data-trend='{{ stats.fraud_trend|tojson }}'></canvas></div></div></div>
+</div>
+<div class="card mt-3"><div class="card-body">
+  <h5>Users</h5>
+  <table class="table table-sm"><thead><tr><th>Email</th><th>Name</th><th>Role</th></tr></thead>
+  <tbody>{% for u in stats.users %}<tr><td>{{ u.email }}</td><td>{{ u.full_name }}</td><td>{{ u.role }}</td></tr>{% endfor %}</tbody></table>
+</div></div>
+<div class="card mt-3"><div class="card-body">
+  <h5>Recent alerts</h5>
+  <ul>{% for a in stats.recent_alerts %}<li>{{ a.created_at }} · {{ a.severity }} · {{ a.transaction_id }} — {{ a.message }}</li>{% else %}<li>None</li>{% endfor %}</ul>
+</div></div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}OTP verification{% endblock %}
+{% block heading %}Additional verification{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <span class="badge text-bg-warning">DEMO ONLY</span>
+        <p class="mt-2">A 6-digit OTP was generated for this transaction. It expires in 2 minutes.</p>
+        {% if demo_otp %}
+        <div class="alert alert-info">Demo OTP: <strong>{{ demo_otp }}</strong></div>
+        {% endif %}
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="mb-3">{{ form.transaction_id.label }}{{ form.transaction_id(class="form-control") }}</div>
+          <div class="mb-3">{{ form.otp_code.label }}{{ form.otp_code(class="form-control", maxlength="6") }}</div>
+          <button class="btn btn-primary">Verify OTP</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

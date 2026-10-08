@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Alerts{% endblock %}
+{% block heading %}Alerts{% endblock %}
+{% block content %}
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <select name="severity" class="form-select">
+      <option value="">All severity</option>
+      {% for v in ['MEDIUM','HIGH'] %}<option value="{{ v }}" {% if severity==v %}selected{% endif %}>{{ v }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3"><input class="form-control" name="status" value="{{ status }}" placeholder="Status"></div>
+  <div class="col-md-2"><button class="btn btn-primary">Filter</button></div>
+</form>
+<div class="table-responsive card">
+  <table class="table mb-0">
+    <thead><tr><th>Severity</th><th>Transaction</th><th>Message</th><th>Status</th><th>Created</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td><span class="badge risk-{{ row.severity }}">{{ row.severity }}</span></td>
+        <td><a href="{{ url_for('transaction_detail', transaction_id=row.transaction_id) }}">{{ row.transaction_id }}</a></td>
+        <td>{{ row.message }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.created_at }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No alerts.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

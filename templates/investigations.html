@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Investigations{% endblock %}
+{% block heading %}Investigations{% endblock %}
+{% block content %}
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <select name="status" class="form-select">
+      <option value="">All statuses</option>
+      {% for v in ['OPEN','INVESTIGATING','RESOLVED','FALSE_POSITIVE','CONFIRMED_FRAUD'] %}
+      <option value="{{ v }}" {% if status==v %}selected{% endif %}>{{ v }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-primary">Filter</button></div>
+</form>
+<div class="table-responsive card">
+  <table class="table mb-0">
+    <thead><tr><th>ID</th><th>Transaction</th><th>Status</th><th>Risk</th><th>Score</th><th>Created</th></tr></thead>
+    <tbody>
+    {% for row in rows %}
+      <tr>
+        <td><a href="{{ url_for('investigation_detail', investigation_id=row.id) }}">{{ row.id }}</a></td>
+        <td>{{ row.transaction_id }}</td>
+        <td>{{ row.status }}</td>
+        <td><span class="badge risk-{{ row.risk_level }}">{{ row.risk_level }}</span></td>
+        <td>{{ row.risk_score }}</td>
+        <td>{{ row.created_at }}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="6">No investigations.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Investigator{% endblock %}
+{% block heading %}Investigator dashboard{% endblock %}
+{% block content %}
+<div class="row g-3">
+  {% for key, label in [('open','Open investigations'),('investigating','Investigating'),('high_risk_tx','HIGH-risk transactions'),('confirmed_fraud','Confirmed fraud'),('active','Active investigations')] %}
+  <div class="col"><div class="stat-card"><div class="stat-label">{{ label }}</div><div class="stat-value">{{ stats[key] }}</div></div></div>
+  {% endfor %}
+</div>
+<div class="card mt-3"><div class="card-body">
+  <h5>Queue</h5>
+  <table class="table">
+    <thead><tr><th>ID</th><th>Txn</th><th>Status</th><th>Risk</th></tr></thead>
+    <tbody>
+    {% for row in cases %}
+      <tr>
+        <td><a href="{{ url_for('investigation_detail', investigation_id=row.id) }}">{{ row.id }}</a></td>
+        <td>{{ row.transaction_id }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.risk_level }} / {{ row.risk_score }}</td>
+      </tr>
+    {% else %}<tr><td colspan="4">Queue empty.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div></div>
+{% endblock %}

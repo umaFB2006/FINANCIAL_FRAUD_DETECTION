@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block heading %}Profile{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="card"><div class="card-body">
+      <h5>{{ user.full_name }}</h5>
+      <p class="mb-1">{{ user.email }}</p>
+      <p class="mb-0">Role: {{ user.role }}</p>
+      <p class="text-muted small">Joined {{ user.created_at }}</p>
+    </div></div>
+  </div>
+  <div class="col-md-7">
+    <div class="card"><div class="card-body">
+      <h5>Change password</h5>
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="mb-2">{{ form.current_password.label }}{{ form.current_password(class="form-control") }}</div>
+        <div class="mb-2">{{ form.new_password.label }}{{ form.new_password(class="form-control") }}</div>
+        <div class="mb-3">{{ form.confirm_password.label }}{{ form.confirm_password(class="form-control") }}</div>
+        <button class="btn btn-primary">Update password</button>
+      </form>
+    </div></div>
+  </div>
+</div>
+{% endblock %}

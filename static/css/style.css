@@ -1,0 +1,31 @@
+:root {
+  --navy: #071425;
+  --panel: #10233d;
+  --accent: #3ee0c5;
+  --text: #e8eef7;
+}
+body { background: #08111d; color: var(--text); font-family: "Segoe UI", sans-serif; }
+.app-shell { min-height: 100vh; }
+.sidebar { width: 240px; background: var(--navy); min-height: 100vh; }
+.sidebar .brand { color: var(--accent); font-weight: 700; letter-spacing: .04em; }
+.sidebar .nav-link { color: #c5d4ea; border-radius: 8px; }
+.sidebar .nav-link:hover { background: var(--panel); color: #fff; }
+.topbar { background: #0b1a2e; }
+.content { background: #0e1724; min-height: calc(100vh - 56px); }
+.card { background: #132033; color: var(--text); border: 1px solid #1f3554; }
+.stat-card { background: #132033; border: 1px solid #1f3554; border-radius: 12px; padding: 1rem; }
+.stat-label { color: #9fb3cc; font-size: .85rem; }
+.stat-value { font-size: 1.6rem; font-weight: 700; }
+.badge.risk-LOW { background: #198754; }
+.badge.risk-MEDIUM { background: #e6a817; color: #111; }
+.badge.risk-HIGH { background: #dc3545; }
+.form-control, .form-select { background: #0c1828; color: #fff; border-color: #27466d; }
+.form-control:focus { background: #0c1828; color: #fff; }
+.table { color: var(--text); }
+.table thead { color: #9fb3cc; }
+pre { color: #d5e4f7; }
+@media (max-width: 900px) {
+  .sidebar { width: 72px; }
+  .sidebar span, .sidebar .nav-link { font-size: 0; }
+  .sidebar .nav-link i { font-size: 1.1rem; }
+}
